@@ -1,0 +1,715 @@
+<!DOCTYPE html><html lang="ar" dir="rtl" class="light" style=""><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mizan Design System Playground (ميزان)</title>
+  <!-- Google Fonts: IBM Plex Sans Arabic + IBM Plex Sans Latin -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&amp;family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet">
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"IBM Plex Sans Arabic"', '"IBM Plex Sans"', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            brand: {
+              primary: '#184E3F',
+              'primary-hover': '#123B2F',
+              secondary: '#3A7D69',
+              'secondary-tint': '#E8F3EE',
+              accent: '#0D9488',
+              dark: '#34D399',
+            },
+            sakina: {
+              surface: '#FFFFFF',
+              canvas: '#F8FAF9',
+              darkCanvas: '#0A100D',
+              darkSurface: '#121A16',
+              darkSubtle: '#1A2420',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Tabular figures for numerals & timers */
+    .tnum { font-feature-settings: "tnum" on, "cv01" on; }
+    /* Micro-elevation utilities */
+    .shadow-mizan-1 { box-shadow: 0 1px 3px rgba(15, 26, 21, 0.05), 0 1px 2px rgba(15, 26, 21, 0.03); }
+    .shadow-mizan-2 { box-shadow: 0 4px 12px -2px rgba(15, 26, 21, 0.08), 0 2px 6px -1px rgba(15, 26, 21, 0.04); }
+    .shadow-mizan-modal { box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.08); }
+    
+    /* Smooth transitions */
+    * { transition: background-color 0.2s ease, border-color 0.2s ease, color 0.15s ease; }
+    
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #CCD7D0; border-radius: 9999px; }
+    .dark ::-webkit-scrollbar-thumb { background: #2D3F36; }
+  </style>
+</head>
+<body class="bg-[#F8FAF9] dark:bg-[#0A100D] text-[#0F1A15] dark:text-[#EDF5F1] font-sans antialiased min-h-screen selection:bg-[#184E3F] selection:text-white dark:selection:bg-[#34D399] dark:selection:text-[#0A100D]">
+
+  <!-- Top Sticky Navigation Bar -->
+  <header class="sticky top-0 z-50 bg-[#F8FAF9]/85 dark:bg-[#0A100D]/85 backdrop-blur-md border-b border-[#E5EBE7] dark:border-[#1E2B25] px-4 md:px-8 py-3.5">
+    <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+      <!-- Brand & Metadata -->
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-[#184E3F] dark:bg-[#34D399] text-white dark:text-[#0A100D] flex items-center justify-center font-bold text-xl shadow-mizan-1">
+          م
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-lg md:text-xl font-bold tracking-tight text-[#0F1A15] dark:text-[#EDF5F1]">نظام ميزان للتصميم</h1>
+            <span class="text-xs px-2 py-0.5 rounded-full font-medium bg-[#E8F3EE] dark:bg-[#132A22] text-[#184E3F] dark:text-[#34D399] border border-[#CCD7D0]/40 dark:border-[#2D3F36]">v1.0 • سكينة</span>
+          </div>
+          <p class="text-xs text-[#7A8F85] dark:text-[#687D73] hidden sm:block">Mizan Design System Playground • Arabic-First Mobile Framework</p>
+        </div>
+      </div>
+
+      <!-- Quick Controls: Theme Toggle & Direction Toggle & Preview Scale -->
+      <div class="flex items-center gap-2.5">
+        <!-- Direction Toggle (RTL / LTR) -->
+        <button id="dirToggle" onclick="toggleDirection()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium bg-white dark:bg-[#121A16] border border-[#E5EBE7] dark:border-[#1E2B25] text-[#4A5D54] dark:text-[#A3B8AE] hover:border-[#184E3F] dark:hover:border-[#34D399] shadow-mizan-1 transition">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
+          <span id="dirLabel" class="">العربية (RTL)</span>
+        </button>
+
+        <!-- Dark/Light Theme Switcher -->
+        <button id="themeToggle" onclick="toggleTheme()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-[#184E3F] dark:bg-[#34D399] text-white dark:text-[#0A100D] shadow-mizan-1 hover:opacity-90 transition">
+          <svg id="themeIconDark" class="w-3.5 h-3.5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+          <svg id="themeIconLight" class="w-3.5 h-3.5 block dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+          <span id="themeLabel" class="">الوضع الليلي</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Showcase Container -->
+  <main class="max-w-7xl mx-auto px-4 md:px-8 py-8 space-y-12">
+
+    <!-- Section 1: Hero Design Language Philosophy -->
+    <section class="bg-white dark:bg-[#121A16] border border-[#E5EBE7] dark:border-[#1E2B25] rounded-2xl p-6 md:p-8 shadow-mizan-1 relative overflow-hidden">
+      <div class="absolute -top-12 -left-12 w-48 h-48 bg-[#184E3F]/5 dark:bg-[#34D399]/5 rounded-full blur-2xl pointer-events-none"></div>
+      <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 relative z-10">
+        <div class="space-y-3 max-w-2xl">
+          <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-md text-xs font-semibold bg-[#E8F3EE] dark:bg-[#132A22] text-[#184E3F] dark:text-[#34D399]">
+            <span class="">معمارية النظام المزدوج</span>
+            <span class="">•</span>
+            <span class="">Mizan Core + Sakina Theme</span>
+          </div>
+          <h2 class="text-2xl md:text-3xl font-bold tracking-tight text-[#0F1A15] dark:text-[#EDF5F1]">
+            لوحة الاختبار التفاعلية لنظام التصميم المحمول
+          </h2>
+          <p class="text-sm md:text-base text-[#4A5D54] dark:text-[#A3B8AE] leading-relaxed">
+            تم بناء ميزان ليكون لغة تصميم عربية أصيلة وعالمية المعايير تستند إلى شبكة تباعد 4px، وخط IBM Plex Sans Arabic المعتمد بصرياً، مع الالتزام الصارم بقيود أندرويد 14 وحيادية الخصوصية بدون تسريب سحابي.
+          </p>
+        </div>
+        
+        <!-- Architecture Pillars Cards -->
+        <div class="grid grid-cols-2 gap-3 w-full lg:w-auto">
+          <div class="p-3.5 rounded-xl bg-[#F8FAF9] dark:bg-[#1A2420] border border-[#E5EBE7] dark:border-[#1E2B25]">
+            <p class="text-[11px] text-[#7A8F85] dark:text-[#687D73] font-medium">الطبقة الأولى (Core)</p>
+            <p class="text-sm font-bold text-[#0F1A15] dark:text-[#EDF5F1] mt-0.5">ميزان العام</p>
+            <p class="text-xs text-[#4A5D54] dark:text-[#A3B8AE] mt-1">مكونات محايدة لأي تطبيق</p>
+          </div>
+          <div class="p-3.5 rounded-xl bg-[#E8F3EE] dark:bg-[#132A22] border border-[#CCD7D0]/60 dark:border-[#2D3F36]">
+            <p class="text-[11px] text-[#184E3F] dark:text-[#34D399] font-medium">الطبقة الثانية (Theme)</p>
+            <p class="text-sm font-bold text-[#184E3F] dark:text-[#34D399] mt-0.5">سمة سكينة</p>
+            <p class="text-xs text-[#3A7D69] dark:text-[#A3B8AE] mt-1">أتمتة صمت المساجد بهدوء</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: Color Palette & Semantic Tokens -->
+    <section class="space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-xl font-bold text-[#0F1A15] dark:text-[#EDF5F1]">1. الرموز اللونية (Color Tokens &amp; Semantics)</h3>
+          <p class="text-xs text-[#7A8F85] dark:text-[#687D73]">تدرجات الألوان المعيارية لسمة سكينة مع التباين المتوافق مع WCAG 2.2 AA</p>
+        </div>
+        <span class="text-xs font-mono text-[#7A8F85] dark:text-[#687D73] bg-white dark:bg-[#121A16] px-2.5 py-1 rounded-md border border-[#E5EBE7] dark:border-[#1E2B25]">4px Step Base</span>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
+        <!-- Brand Primary -->
+        <div class="p-3 rounded-xl bg-white dark:bg-[#121A16] border border-[#E5EBE7] dark:border-[#1E2B25] shadow-mizan-1 space-y-2">
+          <div class="h-16 rounded-lg bg-[#184E3F] dark:bg-[#34D399] flex items-end p-2">
+            <span class="text-[10px] font-mono text-white dark:text-[#0A100D] font-bold">#184E3F</span>
+          </div>
+          <div>
+            <p class="text-xs font-bold text-[#0F1A15] dark:text-[#EDF5F1]">brand.primary</p>
+            <p class="text-[11px] text-[#7A8F85] dark:text-[#687D73]">السرو الداكن / الصمت</p>
+          </div>
+        </div>
+
+        <!-- Brand Secondary -->
+        <div class="p-3 rounded-xl bg-white dark:bg-[#121A16] border border-[#E5EBE7] dark:border-[#1E2B25] shadow-mizan-1 space-y-2">
+          <div class="h-16 rounded-lg bg-[#3A7D69] dark:bg-[#20725C] flex items-end p-2">
+            <span class="text-[10px] font-mono text-white font-bold">#3A7D69</span>
+          </div>
+          <div>
+            <p class="text-xs font-bold text-[#0F1A15] dark:text-[#EDF5F1]">brand.secondary</p>
+            <p class="text-[11px] text-[#7A8F85] dark:text-[#687D73]">المريمي المعدني</p>
+          </div>
+        </div>
+
+        <!-- Brand Accent / Tint -->
+        <div class="p-3 rounded-xl bg-white dark:bg-[#121A16] border border-[#E5EBE7] dark:border-[#1E2B25] shadow-mizan-1 space-y-2">
+          <div class="h-16 rounded-lg bg-[#E8F3EE] dark:bg-[#132A22] border border-[#CCD7D0]/40 flex items-end p-2">
+            <span class="text-[10px] font-mono text-[#184E3F] dark:text-[#34D399] font-bold">#E8F3EE</span>
+          </div>
+          <div>
+            <p class="text-xs font-bold text-[#0F1A15] dark:text-[#EDF5F1]">brand.tint</p>
+            <p class="text-[11px] text-[#7A8F85] dark:text-[#687D73]">خلفية الحالات النشطة</p>
+          </div>
+        </div>
+
+        <!-- Feedback Success -->
+        <div class="p-3 rounded-xl bg-white dark:bg-[#121A16] border border-[#E5EBE7] dark:border-[#1E2B25] shadow-mizan-1 space-y-2">
+          <div class="h-16 rounded-lg bg-[#16A34A] dark:bg-[#22C55E] flex items-end p-2">
+            <span class="text-[10px] font-mono text-white dark:text-[#0A100D] font-bold">#16A34A</span>
+          </div>
+          <div>
+            <p class="text-xs font-bold text-[#0F1A15] dark:text-[#EDF5F1]">feedback.success</p>
+            <p class="text-[11px] text-[#7A8F85] dark:text-[#687D73]">الصمت مؤكد ونشط</p>
+          </div>
+        </div>
+
+        <!-- Feedback Warning / Amber -->
+        <div class="p-3 rounded-xl bg-white dark:bg-[#121A16] border border-[#E5EBE7] dark:border-[#1E2B25] shadow-mizan-1 space-y-2">
+          <div class="h-16 rounded-lg bg-[#D97706] dark:bg-[#F59E0B] flex items-end p-2">
+            <span class="text-[10px] font-mono text-white dark:text-[#0A100D] font-bold">#D97706</span>
+          </div>
+          <div>
+            <p class="text-xs font-bold text-[#0F1A15] dark:text-[#EDF5F1]">feedback.warning</p>
+            <p class="text-[11px] text-[#7A8F85] dark:text-[#687D73]">نافذة الصلاة قريبة</p>
+          </div>
+        </div>
+
+        <!-- Feedback Info / Diagnostic -->
+        <div class="p-3 rounded-xl bg-white dark:bg-[#121A16] border border-[#E5EBE7] dark:border-[#1E2B25] shadow-mizan-1 space-y-2">
+          <div class="h-16 rounded-lg bg-[#0284C7] dark:bg-[#38BDF8] flex items-end p-2">
+            <span class="text-[10px] font-mono text-white dark:text-[#0A100D] font-bold">#0284C7</span>
+          </div>
+          <div>
+            <p class="text-xs font-bold text-[#0F1A15] dark:text-[#EDF5F1]">feedback.info</p>
+            <p class="text-[11px] text-[#7A8F85] dark:text-[#687D73]">بيانات نظام أندرويد 14</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 3: Typography & RTL / LTR Directionality -->
+    <section class="space-y-4">
+      <div>
+        <h3 class="text-xl font-bold text-[#0F1A15] dark:text-[#EDF5F1]">2. سلم الخطوط والتعامل ثنائي الاتجاه (Typography &amp; Numerals)</h3>
+        <p class="text-xs text-[#7A8F85] dark:text-[#687D73]">خط IBM Plex Sans Arabic المعتمد بصرياً مع عزل الأرقام والإحداثيات الجغرافية عبر &lt;bdi&gt;</p>
+      </div>
+
+      <div class="bg-white dark:bg-[#121A16] border border-[#E5EBE7] dark:border-[#1E2B25] rounded-2xl p-6 shadow-mizan-1 divide-y divide-[#E5EBE7] dark:divide-[#1E2B25]">
+        
+        <!-- Display Large -->
+        <div class="py-4 flex flex-col md:flex-row md:items-baseline justify-between gap-2">
+          <div class="w-44 shrink-0">
+            <span class="text-xs font-mono text-[#7A8F85] dark:text-[#687D73]">display-lg (32px / 44px)</span>
+            <p class="text-[11px] text-[#4A5D54] dark:text-[#A3B8AE]">Hero Statements • 700 Bold</p>
+          </div>
+          <div class="flex-1">
+            <h2 class="text-[32px] leading-[44px] font-bold text-[#0F1A15] dark:text-[#EDF5F1]">
+              هاتفك صامت داخل الحرم
+            </h2>
+            <p class="text-xs text-[#7A8F85] dark:text-[#687D73] mt-1 font-mono">Latin: Your phone is silenced in the sanctuary</p>
+          </div>
+        </div>
+
+        <!-- Display Small / Screen Headers -->
+        <div class="py-4 flex flex-col md:flex-row md:items-baseline justify-between gap-2">
+          <div class="w-44 shrink-0">
+            <span class="text-xs font-mono text-[#7A8F85] dark:text-[#687D73]">display-sm (24px / 36px)</span>
+            <p class="text-[11px] text-[#4A5D54] dark:text-[#A3B8AE]">Screen Titles • 600 SemiBold</p>
+          </div>
+          <div class="flex-1">
+            <h3 class="text-[24px] leading-[36px] font-semibold text-[#0F1A15] dark:text-[#EDF5F1]">
+              نوافذ أوقات الصلاة والجمعة
+            </h3>
+          </div>
+        </div>
+
+        <!-- Headline / Card Header -->
+        <div class="py-4 flex flex-col md:flex-row md:items-baseline justify-between gap-2">
+          <div class="w-44 shrink-0">
+            <span class="text-xs font-mono text-[#7A8F85] dark:text-[#687D73]">headline (20px / 30px)</span>
+            <p class="text-[11px] text-[#4A5D54] dark:text-[#A3B8AE]">Card Headers • 500 Medium</p>
+          </div>
+          <div class="flex-1">
+            <h4 class="text-[20px] leading-[30px] font-medium text-[#0F1A15] dark:text-[#EDF5F1]">
+              جامع الصالح • صنعاء، اليمن
+            </h4>
+          </div>
+        </div>
+
+        <!-- Body Large & Sm with Isolated Numerals -->
+        <div class="py-4 flex flex-col md:flex-row md:items-baseline justify-between gap-2">
+          <div class="w-44 shrink-0">
+            <span class="text-xs font-mono text-[#7A8F85] dark:text-[#687D73]">body-lg &amp; bdi isolator</span>
+            <p class="text-[11px] text-[#4A5D54] dark:text-[#A3B8AE]">Tabular Timers • Coordinates</p>
+          </div>
+          <div class="flex-1 space-y-2">
+            <p class="text-[16px] leading-[26px] text-[#4A5D54] dark:text-[#A3B8AE]">
+              تم تفعيل وضع كتم الصوت التلقائي عبر قاعدة أندرويد <code class="text-xs font-mono px-1.5 py-0.5 rounded bg-[#F1F5F3] dark:bg-[#1A2420] text-[#184E3F] dark:text-[#34D399]">AutomaticZenRule</code>. الوقت المتبقي لانتهاء جلسة الصلاة: 
+              <span class="inline-flex items-center gap-1 font-bold text-[#184E3F] dark:text-[#34D399] tnum bg-[#E8F3EE] dark:bg-[#132A22] px-2 py-0.5 rounded-md">
+                <bdi>00:41:28</bdi>
+              </span>
+            </p>
+            <p class="text-xs text-[#7A8F85] dark:text-[#687D73] flex items-center gap-2">
+              <span class="">إحداثيات السياج الجغرافي:</span>
+              <span class="font-mono bg-[#F8FAF9] dark:bg-[#1A2420] px-2 py-0.5 rounded border border-[#E5EBE7] dark:border-[#1E2B25]"><bdi>15.3694° N, 44.1910° E</bdi></span>
+              <span class="">• دقة الرصد: <bdi class="font-mono">1.8s &lt; 5s</bdi></span>
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Section 4: Production Mobile Component Library (Interactive Showcase) -->
+    <section class="space-y-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-xl font-bold text-[#0F1A15] dark:text-[#EDF5F1]">3. مكتبة المكونات التفاعلية (Mobile Components)</h3>
+          <p class="text-xs text-[#7A8F85] dark:text-[#687D73]">مكونات React Native + NativeWind مطابقة لمواصفات المستند ومصممة بدقة اللمس</p>
+        </div>
+        <span class="text-xs text-[#3A7D69] dark:text-[#34D399] font-medium bg-[#E8F3EE] dark:bg-[#132A22] px-2.5 py-1 rounded-md">Touch Target ≥ 48px</span>
+      </div>
+
+      <!-- Component Showcase Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        <!-- Column A: Controls, Buttons & Inputs -->
+        <div class="space-y-6">
+
+          <!-- 1. Buttons & Action Variants -->
+          <div class="bg-white dark:bg-[#121A16] border border-[#E5EBE7] dark:border-[#1E2B25] rounded-2xl p-5 shadow-mizan-1 space-y-4">
+            <div class="flex items-center justify-between border-b border-[#E5EBE7] dark:border-[#1E2B25] pb-3">
+              <h4 class="text-sm font-bold text-[#0F1A15] dark:text-[#EDF5F1]">الأزرار وحالات التفاعل (Buttons &amp; Touch Targets)</h4>
+              <span class="text-[11px] font-mono text-[#7A8F85] dark:text-[#687D73]">radius-md: 10px</span>
+            </div>
+
+            <!-- Primary Buttons -->
+            <div class="space-y-3">
+              <p class="text-xs text-[#7A8F85] dark:text-[#687D73] font-medium">الزر الأساسي (Primary Solid) &amp; الزر الثانوي (Secondary Outlined)</p>
+              <div class="flex flex-wrap items-center gap-3">
+                <!-- Primary Solid -->
+                <button class="min-h-[48px] px-5 py-2.5 rounded-[10px] bg-[#184E3F] hover:bg-[#123B2F] active:scale-[0.98] text-white text-sm font-semibold flex items-center justify-center gap-2 shadow-mizan-1 transition">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2"></path></svg>
+                  <span class="">كتم الصوت يدوياً الآن</span>
+                </button>
+
+                <!-- Secondary Tint -->
+                <button class="min-h-[48px] px-5 py-2.5 rounded-[10px] bg-[#E8F3EE] dark:bg-[#132A22] hover:bg-[#CCD7D0]/40 dark:hover:bg-[#1A382D] text-[#184E3F] dark:text-[#34D399] text-sm font-semibold flex items-center justify-center gap-2 transition">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                  <span class="">إيقاف مؤقت (Pause)</span>
+                </button>
+
+                <!-- Destructive / Subtle -->
+                <button class="min-h-[48px] px-4 py-2.5 rounded-[10px] border border-[#CCD7D0] dark:border-[#2D3F36] hover:bg-[#F1F5F3] dark:hover:bg-[#1A2420] text-[#4A5D54] dark:text-[#A3B8AE] text-sm font-medium transition">
+                  <span class="">إلغاء الجلسة</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Icon Buttons with accessible min-width 48px -->
+            <div class="space-y-2 pt-2">
+              <p class="text-xs text-[#7A8F85] dark:text-[#687D73] font-medium">أزرار الأيقونات المستديرة (Icon Buttons 48×48)</p>
+              <div class="flex items-center gap-3">
+                <button class="w-12 h-12 rounded-full bg-[#F1F5F3] dark:bg-[#1A2420] hover:bg-[#E8EFEA] dark:hover:bg-[#2B3B34] text-[#184E3F] dark:text-[#34D399] flex items-center justify-center shadow-mizan-1 transition" title="إعدادات التوقيت">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+                </button>
+                <button class="w-12 h-12 rounded-full bg-[#F1F5F3] dark:bg-[#1A2420] hover:bg-[#E8EFEA] dark:hover:bg-[#2B3B34] text-[#184E3F] dark:text-[#34D399] flex items-center justify-center shadow-mizan-1 transition" title="فحص التشخيص">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                </button>
+                <button class="w-12 h-12 rounded-full bg-[#184E3F] dark:bg-[#34D399] text-white dark:text-[#0A100D] flex items-center justify-center shadow-mizan-1 transition" title="تحديث الموقع الجغرافي">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- 2. Switches & Native Mobile Form Rows -->
+          <div class="bg-white dark:bg-[#121A16] border border-[#E5EBE7] dark:border-[#1E2B25] rounded-2xl p-5 shadow-mizan-1 space-y-4">
+            <div class="flex items-center justify-between border-b border-[#E5EBE7] dark:border-[#1E2B25] pb-3">
+              <h4 class="text-sm font-bold text-[#0F1A15] dark:text-[#EDF5F1]">عناصر التحكم التبادلية (Switches &amp; Setting Rows)</h4>
+              <span class="text-xs text-[#3A7D69] dark:text-[#34D399] font-medium">Android 14 Ergonomics</span>
+            </div>
+
+            <div class="space-y-3 divide-y divide-[#E5EBE7] dark:divide-[#1E2B25]">
+              <!-- Switch Row 1: Active Automation -->
+              <div class="flex items-center justify-between pt-2">
+                <div class="space-y-0.5">
+                  <p class="text-sm font-semibold text-[#0F1A15] dark:text-[#EDF5F1]">تفعيل الأتمتة التلقائية</p>
+                  <p class="text-xs text-[#7A8F85] dark:text-[#687D73]">كتم الصوت تلقائياً خلال 5 ثوانٍ عند الدخول</p>
+                </div>
+                <!-- Custom Accessible Switch -->
+                <label class="relative inline-flex items-center cursor-pointer select-none"><input type="checkbox" checked="" class="sr-only peer"><div class="w-11 h-6 bg-[#CCD7D0] peer-focus:outline-none rounded-full peer dark:bg-[#2D3F36] peer-checked:bg-[#184E3F] dark:peer-checked:bg-[#34D399] transition-colors relative"><span class="absolute top-[3px] start-[3px] bg-white rounded-full h-[18px] w-[18px] shadow-sm transition-transform ltr:peer-checked:translate-x-5 rtl:peer-checked:-translate-x-5 pointer-events-none" style="inset-inline-start: 3px;"></span></div></label>
+              </div>
+
+              <!-- Switch Row 2: Offline Operation Priority -->
+              <div class="flex items-center justify-between pt-3">
+                <div class="space-y-0.5">
+                  <p class="text-sm font-semibold text-[#0F1A15] dark:text-[#EDF5F1]">وضع العمل بدون إنترنت (Offline)</p>
+                  <p class="text-xs text-[#7A8F85] dark:text-[#687D73]">الاعتماد فقط على بيانات المساجد المخزنة محلياً</p>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer select-none"><input type="checkbox" checked="" class="sr-only peer"><div class="w-11 h-6 bg-[#CCD7D0] peer-focus:outline-none rounded-full peer dark:bg-[#2D3F36] peer-checked:bg-[#184E3F] dark:peer-checked:bg-[#34D399] transition-colors relative"><span class="absolute top-[3px] start-[3px] bg-white rounded-full h-[18px] w-[18px] shadow-sm transition-transform ltr:peer-checked:translate-x-5 rtl:peer-checked:-translate-x-5 pointer-events-none" style="inset-inline-start: 3px;"></span></div></label>
+              </div>
+
+              <!-- Switch Row 3: Samsung Clock Alarm Silence -->
+              <div class="flex items-center justify-between pt-3">
+                <div class="space-y-0.5">
+                  <p class="text-sm font-semibold text-[#0F1A15] dark:text-[#EDF5F1]">احترام كتم المنبهات أثناء الصلاة</p>
+                  <p class="text-xs text-[#7A8F85] dark:text-[#687D73]">وفق إعدادات تطبيق ساعة سامسونج (One UI)</p>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer select-none"><input type="checkbox" class="sr-only peer"><div class="w-11 h-6 bg-[#CCD7D0] peer-focus:outline-none rounded-full peer dark:bg-[#2D3F36] peer-checked:bg-[#184E3F] dark:peer-checked:bg-[#34D399] transition-colors relative"><span class="absolute top-[3px] start-[3px] bg-white rounded-full h-[18px] w-[18px] shadow-sm transition-transform ltr:peer-checked:translate-x-5 rtl:peer-checked:-translate-x-5 pointer-events-none" style="inset-inline-start: 3px;"></span></div></label>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- 3. Sliders / Stepper (Prayer Timing Configuration) -->
+          <div class="bg-white dark:bg-[#121A16] border border-[#E5EBE7] dark:border-[#1E2B25] rounded-2xl p-5 shadow-mizan-1 space-y-4">
+            <div class="flex items-center justify-between border-b border-[#E5EBE7] dark:border-[#1E2B25] pb-3">
+              <h4 class="text-sm font-bold text-[#0F1A15] dark:text-[#EDF5F1]">محددات النطاق الزمني (Window Sliders)</h4>
+              <span class="text-xs font-mono text-[#184E3F] dark:text-[#34D399] font-bold bg-[#E8F3EE] dark:bg-[#132A22] px-2 py-0.5 rounded">15 دقيقة قبل / 45 بعد</span>
+            </div>
+
+            <!-- Slider 1 -->
+            <div class="space-y-2">
+              <div class="flex items-center justify-between text-xs">
+                <span class="font-medium text-[#4A5D54] dark:text-[#A3B8AE]">نافذة ما قبل الأذان</span>
+                <span class="font-bold text-[#184E3F] dark:text-[#34D399] tnum"><bdi>15 دقيقة</bdi></span>
+              </div>
+              <input type="range" min="5" max="30" value="15" class="w-full h-2 bg-[#E5EBE7] dark:bg-[#1E2B25] rounded-lg appearance-none cursor-pointer accent-[#184E3F] dark:accent-[#34D399]">
+              <div class="flex justify-between text-[10px] text-[#7A8F85] dark:text-[#687D73] font-mono">
+                <span class="">5 د</span>
+                <span class="">15 د (الافتراضي)</span>
+                <span class="">30 د</span>
+              </div>
+            </div>
+
+            <!-- Slider 2 -->
+            <div class="space-y-2 pt-2">
+              <div class="flex items-center justify-between text-xs">
+                <span class="font-medium text-[#4A5D54] dark:text-[#A3B8AE]">الحد الأقصى لانتهاء الجلسة التلقائي</span>
+                <span class="font-bold text-[#184E3F] dark:text-[#34D399] tnum"><bdi>60 دقيقة</bdi></span>
+              </div>
+              <input type="range" min="20" max="120" value="60" class="w-full h-2 bg-[#E5EBE7] dark:bg-[#1E2B25] rounded-lg appearance-none cursor-pointer accent-[#184E3F] dark:accent-[#34D399]">
+              <div class="flex justify-between text-[10px] text-[#7A8F85] dark:text-[#687D73] font-mono">
+                <span class="">20 د (الحد الأدنى)</span>
+                <span class="">60 د</span>
+                <span class="">120 د</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Column B: State Cards, Badges, Diagnostics & Mobile Mockup -->
+        <div class="space-y-6">
+
+          <!-- 4. Status Badges & Chips -->
+          <div class="bg-white dark:bg-[#121A16] border border-[#E5EBE7] dark:border-[#1E2B25] rounded-2xl p-5 shadow-mizan-1 space-y-4">
+            <div class="flex items-center justify-between border-b border-[#E5EBE7] dark:border-[#1E2B25] pb-3">
+              <h4 class="text-sm font-bold text-[#0F1A15] dark:text-[#EDF5F1]">شارات الحالة ومؤشرات الأمان (Status Chips)</h4>
+              <span class="text-xs text-[#7A8F85] dark:text-[#687D73]">High-Trust Semantics</span>
+            </div>
+
+            <div class="flex flex-wrap gap-2.5">
+              <!-- Active Silence Chip -->
+              <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-[#DCFCE7] dark:bg-[#052E16] text-[#16A34A] dark:text-[#22C55E] border border-[#16A34A]/20">
+                <span class="w-2 h-2 rounded-full bg-[#16A34A] animate-pulse"></span>
+                <span class="">صامت نشط (Active)</span>
+              </span>
+
+              <!-- Standby / Passive Monitoring -->
+              <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-[#E8F3EE] dark:bg-[#132A22] text-[#184E3F] dark:text-[#34D399] border border-[#CCD7D0]/40">
+                <span class="w-2 h-2 rounded-full bg-[#184E3F] dark:bg-[#34D399]"></span>
+                <span class="">مراقبة هادئة (Standby)</span>
+              </span>
+
+              <!-- Manual User Override Active -->
+              <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-[#FEF3C7] dark:bg-[#451A03] text-[#D97706] dark:text-[#F59E0B] border border-[#D97706]/20">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                <span class="">أسبقية الكتم اليدوي</span>
+              </span>
+
+              <!-- Offline Data Cache -->
+              <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-[#F1F5F3] dark:bg-[#1A2420] text-[#4A5D54] dark:text-[#A3B8AE] border border-[#CCD7D0]/60">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 00-9.78 2.096A4.001 4.001 0 003 15z"></path></svg>
+                <span class="">البيانات محلية (Offline)</span>
+              </span>
+            </div>
+          </div>
+
+          <!-- 5. Real MVP Hero Card Simulation (Sakina Card Component) -->
+          <div class="bg-gradient-to-br from-[#184E3F] to-[#123B2F] dark:from-[#132A22] dark:to-[#0A100D] border border-[#3A7D69]/40 dark:border-[#2D3F36] rounded-2xl p-6 text-white shadow-mizan-2 relative overflow-hidden space-y-5">
+            <div class="flex items-center justify-between relative z-10">
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-white/10 text-emerald-100 backdrop-blur-sm">
+                <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                <span class="">جامع قيد الزيارة الآن</span>
+              </div>
+              <span class="text-xs font-mono text-emerald-200/80 tnum"><bdi>SM-G996U • Android 14</bdi></span>
+            </div>
+
+            <div class="space-y-1 relative z-10">
+              <p class="text-xs text-emerald-200 font-medium">الحالة الحالية للهاتف</p>
+              <h4 class="text-2xl font-bold tracking-tight text-white">هاتفك في وضع الصمت التام</h4>
+              <p class="text-xs text-emerald-100/80 leading-relaxed">
+                تم كتم الرنين والإشعارات عبر Zen Mode تلقائياً عند مدخل الجامع.
+              </p>
+            </div>
+
+            <!-- Timer & Actions -->
+            <div class="pt-2 flex items-center justify-between border-t border-white/10 relative z-10">
+              <div>
+                <span class="text-[11px] text-emerald-200/80 block">المدة المنقضية</span>
+                <span class="text-lg font-bold font-mono text-white tnum"><bdi>00:18:42</bdi></span>
+              </div>
+              <button class="px-4 py-2 rounded-xl bg-white text-[#184E3F] hover:bg-emerald-50 text-xs font-bold shadow-mizan-1 transition">
+                إيقاف مؤقت فقط
+              </button>
+            </div>
+          </div>
+
+          <!-- 6. Diagnostic Telemetry & Feasibility Gate Panel -->
+          <div class="bg-white dark:bg-[#121A16] border border-[#E5EBE7] dark:border-[#1E2B25] rounded-2xl p-5 shadow-mizan-1 space-y-3">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-[#0284C7] dark:bg-[#38BDF8]"></span>
+                <h4 class="text-sm font-bold text-[#0F1A15] dark:text-[#EDF5F1]">لوحة التشخيص الميداني (5-Second Gate)</h4>
+              </div>
+              <span class="text-[10px] font-mono text-[#7A8F85] dark:text-[#687D73] bg-[#F1F5F3] dark:bg-[#1A2420] px-2 py-0.5 rounded">اختبار الأداء الحي</span>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2.5 pt-1">
+              <div class="p-2.5 rounded-xl bg-[#F8FAF9] dark:bg-[#1A2420] border border-[#E5EBE7] dark:border-[#1E2B25] text-center">
+                <span class="text-[10px] text-[#7A8F85] dark:text-[#687D73] block">زمن الاستجابة</span>
+                <span class="text-sm font-bold font-mono text-[#16A34A] dark:text-[#22C55E] tnum"><bdi>1.4s ≤ 5s</bdi></span>
+                <span class="text-[9px] text-[#16A34A] dark:text-[#22C55E] block mt-0.5">ناجح (Passed)</span>
+              </div>
+
+              <div class="p-2.5 rounded-xl bg-[#F8FAF9] dark:bg-[#1A2420] border border-[#E5EBE7] dark:border-[#1E2B25] text-center">
+                <span class="text-[10px] text-[#7A8F85] dark:text-[#687D73] block">السياج الجغرافي</span>
+                <span class="text-sm font-bold font-mono text-[#0F1A15] dark:text-[#EDF5F1] tnum"><bdi>± 8m</bdi></span>
+                <span class="text-[9px] text-[#7A8F85] dark:text-[#687D73] block mt-0.5">نصف القطر نشط</span>
+              </div>
+
+              <div class="p-2.5 rounded-xl bg-[#F8FAF9] dark:bg-[#1A2420] border border-[#E5EBE7] dark:border-[#1E2B25] text-center">
+                <span class="text-[10px] text-[#7A8F85] dark:text-[#687D73] block">حالة الشاشة</span>
+                <span class="text-sm font-bold text-[#0F1A15] dark:text-[#EDF5F1]">مقفلة (Locked)</span>
+                <span class="text-[9px] text-[#16A34A] dark:text-[#22C55E] block mt-0.5">تم الرصد بالخلفية</span>
+              </div>
+            </div>
+
+            <p class="text-[11px] text-[#7A8F85] dark:text-[#687D73] pt-1 leading-normal">
+              * يتم حفظ كافة سجلات الكشف محلياً على هاتف سامسونج SM-G996U لتقييم الـ 40 اختباراً المحددة في وثيقة MVP قبل تعميم الصمت النهائي.
+            </p>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Section 5: Bidirectional (RTL vs LTR) Mobile Wireframe Comparison -->
+    <section class="space-y-4">
+      <div class="flex items-center justify-between">
+        <div>
+          <h3 class="text-xl font-bold text-[#0F1A15] dark:text-[#EDF5F1]">4. المقارنة ثنائية الاتجاه (Arabic RTL vs. English LTR Parity)</h3>
+          <p class="text-xs text-[#7A8F85] dark:text-[#687D73]">انعكاس العناصر التوجيهية مع ثبات أيقونات الصوت والساعة وأرقام العدادات</p>
+        </div>
+        <span class="text-xs font-mono text-[#7A8F85] dark:text-[#687D73]">Mobile Viewport: 390×844</span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+        <!-- Mobile Preview Card: Arabic RTL -->
+        <div class="border border-[#CCD7D0] dark:border-[#2D3F36] rounded-[28px] p-5 bg-white dark:bg-[#121A16] shadow-mizan-2 max-w-sm mx-auto w-full space-y-4" dir="rtl">
+          <!-- Mobile Status Bar Mock -->
+          <div class="flex items-center justify-between text-xs text-[#7A8F85] dark:text-[#687D73] font-mono px-1">
+            <span class=""><bdi>12:45</bdi></span>
+            <div class="flex items-center gap-1.5">
+              <span class="">5G</span>
+              <div class="w-4 h-2 rounded-sm border border-current flex items-center p-0.5"><div class="w-2.5 h-1 bg-current rounded-2xs"></div></div>
+            </div>
+          </div>
+
+          <!-- Top App Bar -->
+          <div class="flex items-center justify-between pt-1">
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded-lg bg-[#184E3F] dark:bg-[#34D399] text-white dark:text-[#0A100D] flex items-center justify-center font-bold text-sm">م</div>
+              <div>
+                <h5 class="text-sm font-bold text-[#0F1A15] dark:text-[#EDF5F1]">سكينة</h5>
+                <span class="text-[10px] text-[#7A8F85] dark:text-[#687D73]">أتمتة صامتة</span>
+              </div>
+            </div>
+            <button class="w-8 h-8 rounded-full bg-[#F1F5F3] dark:bg-[#1A2420] flex items-center justify-center text-[#4A5D54] dark:text-[#A3B8AE]">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+            </button>
+          </div>
+
+          <!-- Mini Hero State -->
+          <div class="p-4 rounded-xl bg-[#E8F3EE] dark:bg-[#132A22] border border-[#CCD7D0]/50 dark:border-[#2D3F36] space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] font-bold text-[#184E3F] dark:text-[#34D399] flex items-center gap-1">
+                <span class="w-2 h-2 rounded-full bg-[#184E3F] dark:bg-[#34D399]"></span>
+                جامع الروضة
+              </span>
+              <span class="text-[10px] font-mono text-[#3A7D69] dark:text-[#A3B8AE]"><bdi>صلاة الظهر</bdi></span>
+            </div>
+            <p class="text-xs text-[#4A5D54] dark:text-[#A3B8AE]">صامت تلقائي نشط. تبقى على المغادرة أو انتهاء الصلاة:</p>
+            <div class="text-xl font-bold font-mono text-[#184E3F] dark:text-[#34D399] tnum"><bdi>00:26:14</bdi></div>
+          </div>
+
+          <!-- List Row with Arrow (RTL: Chevron points Left) -->
+          <div class="space-y-1">
+            <div class="flex items-center justify-between p-3 rounded-xl hover:bg-[#F1F5F3] dark:hover:bg-[#1A2420] transition cursor-pointer">
+              <div class="flex items-center gap-2.5">
+                <div class="w-7 h-7 rounded-lg bg-[#E8F3EE] dark:bg-[#132A22] text-[#184E3F] dark:text-[#34D399] flex items-center justify-center">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </div>
+                <span class="text-xs font-semibold text-[#0F1A15] dark:text-[#EDF5F1]">نطاق أوقات الصلوات</span>
+              </div>
+              <!-- In RTL, chevron points Left -->
+              <svg class="w-4 h-4 text-[#7A8F85] dark:text-[#687D73]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+            </div>
+
+            <div class="flex items-center justify-between p-3 rounded-xl hover:bg-[#F1F5F3] dark:hover:bg-[#1A2420] transition cursor-pointer">
+              <div class="flex items-center gap-2.5">
+                <div class="w-7 h-7 rounded-lg bg-[#E8F3EE] dark:bg-[#132A22] text-[#184E3F] dark:text-[#34D399] flex items-center justify-center">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                </div>
+                <span class="text-xs font-semibold text-[#0F1A15] dark:text-[#EDF5F1]">صلاحيات عدم الإزعاج (DND)</span>
+              </div>
+              <svg class="w-4 h-4 text-[#7A8F85] dark:text-[#687D73]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+            </div>
+          </div>
+
+          <div class="pt-2 text-center">
+            <span class="text-[10px] text-[#7A8F85] dark:text-[#687D73]">واجهة عربية أصيلة (Native Arabic RTL)</span>
+          </div>
+        </div>
+
+        <!-- Mobile Preview Card: English LTR -->
+        <div class="border border-[#CCD7D0] dark:border-[#2D3F36] rounded-[28px] p-5 bg-white dark:bg-[#121A16] shadow-mizan-2 max-w-sm mx-auto w-full space-y-4 font-['IBM_Plex_Sans']" dir="ltr">
+          <!-- Mobile Status Bar Mock -->
+          <div class="flex items-center justify-between text-xs text-[#7A8F85] dark:text-[#687D73] font-mono px-1">
+            <span class="">12:45</span>
+            <div class="flex items-center gap-1.5">
+              <span class="">5G</span>
+              <div class="w-4 h-2 rounded-sm border border-current flex items-center p-0.5"><div class="w-2.5 h-1 bg-current rounded-2xs"></div></div>
+            </div>
+          </div>
+
+          <!-- Top App Bar -->
+          <div class="flex items-center justify-between pt-1">
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded-lg bg-[#184E3F] dark:bg-[#34D399] text-white dark:text-[#0A100D] flex items-center justify-center font-bold text-sm">S</div>
+              <div>
+                <h5 class="text-sm font-bold text-[#0F1A15] dark:text-[#EDF5F1]">Sakina</h5>
+                <span class="text-[10px] text-[#7A8F85] dark:text-[#687D73]">Silent Automation</span>
+              </div>
+            </div>
+            <button class="w-8 h-8 rounded-full bg-[#F1F5F3] dark:bg-[#1A2420] flex items-center justify-center text-[#4A5D54] dark:text-[#A3B8AE]">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
+            </button>
+          </div>
+
+          <!-- Mini Hero State -->
+          <div class="p-4 rounded-xl bg-[#E8F3EE] dark:bg-[#132A22] border border-[#CCD7D0]/50 dark:border-[#2D3F36] space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] font-bold text-[#184E3F] dark:text-[#34D399] flex items-center gap-1">
+                <span class="w-2 h-2 rounded-full bg-[#184E3F] dark:bg-[#34D399]"></span>
+                Al-Rawda Mosque
+              </span>
+              <span class="text-[10px] font-mono text-[#3A7D69] dark:text-[#A3B8AE]">Dhuhr Prayer</span>
+            </div>
+            <p class="text-xs text-[#4A5D54] dark:text-[#A3B8AE]">Autonomous silence active. Time until session timeout:</p>
+            <div class="text-xl font-bold font-mono text-[#184E3F] dark:text-[#34D399] tnum">00:26:14</div>
+          </div>
+
+          <!-- List Row with Arrow (LTR: Chevron points Right) -->
+          <div class="space-y-1">
+            <div class="flex items-center justify-between p-3 rounded-xl hover:bg-[#F1F5F3] dark:hover:bg-[#1A2420] transition cursor-pointer">
+              <div class="flex items-center gap-2.5">
+                <div class="w-7 h-7 rounded-lg bg-[#E8F3EE] dark:bg-[#132A22] text-[#184E3F] dark:text-[#34D399] flex items-center justify-center">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </div>
+                <span class="text-xs font-semibold text-[#0F1A15] dark:text-[#EDF5F1]">Prayer Time Windows</span>
+              </div>
+              <!-- In LTR, chevron points Right -->
+              <svg class="w-4 h-4 text-[#7A8F85] dark:text-[#687D73]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            </div>
+
+            <div class="flex items-center justify-between p-3 rounded-xl hover:bg-[#F1F5F3] dark:hover:bg-[#1A2420] transition cursor-pointer">
+              <div class="flex items-center gap-2.5">
+                <div class="w-7 h-7 rounded-lg bg-[#E8F3EE] dark:bg-[#132A22] text-[#184E3F] dark:text-[#34D399] flex items-center justify-center">
+                  <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
+                </div>
+                <span class="text-xs font-semibold text-[#0F1A15] dark:text-[#EDF5F1]">Zen Mode / DND Permission</span>
+              </div>
+              <svg class="w-4 h-4 text-[#7A8F85] dark:text-[#687D73]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            </div>
+          </div>
+
+          <div class="pt-2 text-center">
+            <span class="text-[10px] text-[#7A8F85] dark:text-[#687D73]">Symmetric English LTR Parity</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Footer Note -->
+    <footer class="border-t border-[#E5EBE7] dark:border-[#1E2B25] pt-6 pb-12 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[#7A8F85] dark:text-[#687D73]">
+      <p class="">Mizan Design System Playground • ميزان للتصميم المعياري المحمول • React Native &amp; Expo Ready</p>
+      <div class="flex items-center gap-3">
+        <span class="">WCAG 2.2 AA Compliant</span>
+        <span class="">•</span>
+        <span class="">Samsung SM-G996U Tested Specs</span>
+      </div>
+    </footer>
+
+  </main>
+
+  <!-- Interactive JavaScript logic for toggling Dark Mode and Direction in playground -->
+  <script>
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.classList.toggle('dark');
+      const themeLabel = document.getElementById('themeLabel');
+      themeLabel.textContent = isDark ? 'الوضع النهاري' : 'الوضع الليلي';
+    }
+
+    function toggleDirection() {
+      const html = document.documentElement;
+      const currentDir = html.getAttribute('dir');
+      const newDir = currentDir === 'rtl' ? 'ltr' : 'rtl';
+      html.setAttribute('dir', newDir);
+      document.getElementById('dirLabel').textContent = newDir === 'rtl' ? 'العربية (RTL)' : 'English (LTR)';
+    }
+  </script>
+
+
+
+
+</body></html>
