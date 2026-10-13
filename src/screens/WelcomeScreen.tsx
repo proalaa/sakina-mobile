@@ -1,6 +1,8 @@
 import { FC } from "react"
 import { Image, ImageStyle, TextStyle, View, ViewStyle } from "react-native"
+import { router } from "expo-router"
 
+import { Button } from "@/components/Button"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { isRTL } from "@/i18n"
@@ -38,6 +40,12 @@ export const WelcomeScreen: FC = function WelcomeScreen() {
 
       <View style={themed([$bottomContainer, $bottomContainerInsets])}>
         <Text tx="welcomeScreen:postscript" size="md" />
+        <Button
+          text="مراجعة ميزان · Mizan review"
+          preset="primary"
+          language="ar"
+          onPress={() => router.push("/mizan")}
+        />
       </View>
     </Screen>
   )

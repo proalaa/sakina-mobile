@@ -1,3 +1,5 @@
+import { darkColor } from "./mizan"
+
 const palette = {
   neutral900: "#FFFFFF",
   neutral800: "#F4F2F1",
@@ -38,13 +40,13 @@ const palette = {
 export const colors = {
   palette,
   transparent: "rgba(0, 0, 0, 0)",
-  text: palette.neutral800,
-  textDim: palette.neutral600,
-  background: palette.neutral200,
-  border: palette.neutral400,
-  tint: palette.primary500,
-  tintInactive: palette.neutral300,
-  separator: palette.neutral300,
-  error: palette.angry500,
-  errorBackground: palette.angry100,
+  text: darkColor.text.primary,
+  textDim: darkColor.text.secondary,
+  background: darkColor.canvas,
+  border: darkColor.border.strong,
+  tint: darkColor.brand.primary,
+  tintInactive: darkColor.border.subtle,
+  separator: darkColor.border.subtle,
+  error: darkColor.feedback.error,
+  errorBackground: darkColor.feedback.errorSubtle,
 } as const

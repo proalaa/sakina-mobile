@@ -2,6 +2,7 @@ import type { StyleProp } from "react-native"
 
 import { colors as colorsLight } from "./colors"
 import { colors as colorsDark } from "./colorsDark"
+import { elevation, MizanColor, radii, space } from "./mizan"
 import { spacing as spacingLight } from "./spacing"
 import { spacing as spacingDark } from "./spacingDark"
 import { timing } from "./timing"
@@ -23,6 +24,10 @@ export type Typography = typeof typography
 
 // The overall Theme object should contain all of the data you need to style your app.
 export interface Theme {
+  color: MizanColor
+  space: typeof space
+  radii: typeof radii
+  elevation: typeof elevation
   colors: Colors
   spacing: Spacing
   typography: Typography

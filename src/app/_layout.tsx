@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react"
+import { useFonts } from "expo-font"
 import { Slot, SplashScreen } from "expo-router"
-import { useFonts } from "@expo-google-fonts/space-grotesk"
+import { ThemeProvider as NavigationThemeProvider } from "@react-navigation/native"
 import { KeyboardProvider } from "react-native-keyboard-controller"
 import { initialWindowMetrics, SafeAreaProvider } from "react-native-safe-area-context"
 
 import { initI18n } from "@/i18n"
-import { ThemeProvider } from "@/theme/context"
+import { ThemeProvider, useAppTheme } from "@/theme/context"
 import { customFontsToLoad } from "@/theme/typography"
 import { loadDateFnsLocale } from "@/utils/formatDate"
 
@@ -48,9 +49,18 @@ export default function Root() {
     <SafeAreaProvider initialMetrics={initialWindowMetrics}>
       <ThemeProvider>
         <KeyboardProvider>
-          <Slot />
+          <ThemedRouter />
         </KeyboardProvider>
       </ThemeProvider>
     </SafeAreaProvider>
+  )
+}
+
+function ThemedRouter() {
+  const { navigationTheme } = useAppTheme()
+  return (
+    <NavigationThemeProvider value={navigationTheme}>
+      <Slot />
+    </NavigationThemeProvider>
   )
 }

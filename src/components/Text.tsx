@@ -6,6 +6,7 @@ import { TOptions } from "i18next"
 import { isRTL, TxKeyPath } from "@/i18n"
 import { translate } from "@/i18n/translate"
 import { useAppTheme } from "@/theme/context"
+import type { MizanLanguage, MizanTextVariant } from "@/theme/mizan"
 import type { ThemedStyle, ThemedStyleArray } from "@/theme/types"
 import { typography } from "@/theme/typography"
 
@@ -14,6 +15,11 @@ type Weights = keyof typeof typography.primary
 type Presets = "default" | "bold" | "heading" | "subheading" | "formLabel" | "formHelper"
 
 export interface TextProps extends RNTextProps {
+  /** Canonical Mizan hierarchy; legacy presets remain available. */
+  variant?: MizanTextVariant
+  language?: MizanLanguage
+  /** Tabular figures and LTR isolation for times, coordinates and similar values. */
+  numeric?: boolean
   /**
    * Text which is looked up via i18n.
    */
@@ -57,11 +63,26 @@ export interface TextProps extends RNTextProps {
  * @returns {JSX.Element} The rendered `Text` component.
  */
 export const Text = forwardRef(function Text(props: TextProps, ref: ForwardedRef<RNText>) {
-  const { weight, size, tx, txOptions, text, children, style: $styleOverride, ...rest } = props
-  const { themed } = useAppTheme()
+  const {
+    weight,
+    size,
+    tx,
+    txOptions,
+    text,
+    children,
+    variant,
+    language,
+    numeric,
+    style: $styleOverride,
+    ...rest
+  } = props
+  const { themed, theme } = useAppTheme()
+  const resolvedLanguage = language ?? (isRTL ? "ar" : "en")
 
   const i18nText = tx && translate(tx, txOptions)
   const content = i18nText || text || children
+  const isolatedContent =
+    numeric && typeof content === "string" ? `\u2066${content}\u2069` : content
 
   const preset: Presets = props.preset ?? "default"
   const $styles: StyleProp<TextStyle> = [
@@ -69,12 +90,19 @@ export const Text = forwardRef(function Text(props: TextProps, ref: ForwardedRef
     themed($presets[preset]),
     weight && $fontWeightStyles[weight],
     size && $sizeStyles[size],
+    variant && {
+      ...theme.typography.mizan[resolvedLanguage][variant],
+      color: theme.color.text.primary,
+      writingDirection: resolvedLanguage === "ar" ? "rtl" : "ltr",
+      textAlign: resolvedLanguage === "ar" ? "right" : "left",
+    },
+    numeric && { fontVariant: ["tabular-nums"] },
     $styleOverride,
   ]
 
   return (
-    <RNText {...rest} style={$styles} ref={ref}>
-      {content}
+    <RNText accessibilityLanguage={language} {...rest} style={$styles} ref={ref}>
+      {isolatedContent}
     </RNText>
   )
 })

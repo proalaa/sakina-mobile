@@ -1,3 +1,5 @@
+import { lightColor } from "./mizan"
+
 const palette = {
   neutral100: "#FFFFFF",
   neutral200: "#F4F2F1",
@@ -49,37 +51,37 @@ export const colors = {
   /**
    * The default text color in many components.
    */
-  text: palette.neutral800,
+  text: lightColor.text.primary,
   /**
    * Secondary text information.
    */
-  textDim: palette.neutral600,
+  textDim: lightColor.text.secondary,
   /**
    * The default color of the screen background.
    */
-  background: palette.neutral200,
+  background: lightColor.canvas,
   /**
    * The default border color.
    */
-  border: palette.neutral400,
+  border: lightColor.border.strong,
   /**
    * The main tinting color.
    */
-  tint: palette.primary500,
+  tint: lightColor.brand.primary,
   /**
    * The inactive tinting color.
    */
-  tintInactive: palette.neutral300,
+  tintInactive: lightColor.border.subtle,
   /**
    * A subtle color used for lines.
    */
-  separator: palette.neutral300,
+  separator: lightColor.border.subtle,
   /**
    * Error messages.
    */
-  error: palette.angry500,
+  error: lightColor.feedback.error,
   /**
    * Error Background.
    */
-  errorBackground: palette.angry100,
+  errorBackground: lightColor.feedback.errorSubtle,
 } as const

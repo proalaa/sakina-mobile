@@ -9,12 +9,13 @@ import {
 } from "react-native"
 
 import { useAppTheme } from "@/theme/context"
+import type { MizanLanguage } from "@/theme/mizan"
 import { $styles } from "@/theme/styles"
 import type { ThemedStyle, ThemedStyleArray } from "@/theme/types"
 
 import { Text, TextProps } from "./Text"
 
-type Presets = "default" | "filled" | "reversed"
+type Presets = "default" | "filled" | "reversed" | "primary" | "secondary"
 
 export interface ButtonAccessoryProps {
   style: StyleProp<any>
@@ -23,6 +24,7 @@ export interface ButtonAccessoryProps {
 }
 
 export interface ButtonProps extends PressableProps {
+  language?: MizanLanguage
   /**
    * Text which is looked up via i18n.
    */
@@ -114,12 +116,15 @@ export function Button(props: ButtonProps) {
     LeftAccessory,
     disabled,
     disabledStyle: $disabledViewStyleOverride,
+    language,
+    preset = "default",
+    accessibilityState,
     ...rest
   } = props
 
   const { themed } = useAppTheme()
 
-  const preset: Presets = props.preset ?? "default"
+  const isMizan = preset === "primary" || preset === "secondary"
   /**
    * @param {PressableStateCallbackType} root0 - The root object containing the pressed state.
    * @param {boolean} root0.pressed - The pressed state.
@@ -130,6 +135,7 @@ export function Button(props: ButtonProps) {
       themed($viewPresets[preset]),
       $viewStyleOverride,
       !!pressed && themed([$pressedViewPresets[preset], $pressedViewStyleOverride]),
+      !!disabled && isMizan && $disabledStyle,
       !!disabled && $disabledViewStyleOverride,
     ]
   }
@@ -151,8 +157,8 @@ export function Button(props: ButtonProps) {
     <Pressable
       style={$viewStyle}
       accessibilityRole="button"
-      accessibilityState={{ disabled: !!disabled }}
       {...rest}
+      accessibilityState={{ ...accessibilityState, disabled: !!disabled }}
       disabled={disabled}
     >
       {(state) => (
@@ -161,7 +167,14 @@ export function Button(props: ButtonProps) {
             <LeftAccessory style={$leftAccessoryStyle} pressableState={state} disabled={disabled} />
           )}
 
-          <Text tx={tx} text={text} txOptions={txOptions} style={$textStyle(state)}>
+          <Text
+            tx={tx}
+            text={text}
+            txOptions={txOptions}
+            variant={isMizan ? "label-md" : undefined}
+            language={language}
+            style={$textStyle(state)}
+          >
             {children}
           </Text>
 
@@ -207,7 +220,29 @@ const $leftAccessoryStyle: ThemedStyle<ViewStyle> = ({ spacing }) => ({
   zIndex: 1,
 })
 
+const $mizanViewStyle: ThemedStyle<ViewStyle> = ({ space, radii }) => ({
+  minHeight: space[12],
+  minWidth: space[12],
+  borderRadius: radii.md,
+  paddingVertical: space[3],
+  paddingHorizontal: space[4],
+  flexDirection: "row",
+  justifyContent: "center",
+  alignItems: "center",
+})
+const $mizanTextStyle: TextStyle = { textAlign: "center", flexShrink: 1 }
+const $disabledStyle: ViewStyle = { opacity: 0.5 }
+
 const $viewPresets: Record<Presets, ThemedStyleArray<ViewStyle>> = {
+  primary: [$mizanViewStyle, ({ color }) => ({ backgroundColor: color.brand.primary })],
+  secondary: [
+    $mizanViewStyle,
+    ({ color }) => ({
+      backgroundColor: color.surface.base,
+      borderWidth: 1,
+      borderColor: color.border.strong,
+    }),
+  ],
   default: [
     $styles.row,
     $baseViewStyle,
@@ -230,18 +265,24 @@ const $viewPresets: Record<Presets, ThemedStyleArray<ViewStyle>> = {
 }
 
 const $textPresets: Record<Presets, ThemedStyleArray<TextStyle>> = {
+  primary: [$mizanTextStyle, ({ color }) => ({ color: color.text.inverse })],
+  secondary: [$mizanTextStyle, ({ color }) => ({ color: color.text.brand })],
   default: [$baseTextStyle],
   filled: [$baseTextStyle],
   reversed: [$baseTextStyle, ({ colors }) => ({ color: colors.palette.neutral100 })],
 }
 
 const $pressedViewPresets: Record<Presets, ThemedStyle<ViewStyle>> = {
+  primary: ({ color }) => ({ backgroundColor: color.brand.primaryHover }),
+  secondary: ({ color }) => ({ backgroundColor: color.surface.hover }),
   default: ({ colors }) => ({ backgroundColor: colors.palette.neutral200 }),
   filled: ({ colors }) => ({ backgroundColor: colors.palette.neutral400 }),
   reversed: ({ colors }) => ({ backgroundColor: colors.palette.neutral700 }),
 }
 
 const $pressedTextPresets: Record<Presets, ThemedStyle<TextStyle>> = {
+  primary: () => ({}),
+  secondary: () => ({}),
   default: () => ({ opacity: 0.9 }),
   filled: () => ({ opacity: 0.9 }),
   reversed: () => ({ opacity: 0.9 }),

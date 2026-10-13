@@ -83,23 +83,28 @@ export const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
     return t === "dark" ? "dark" : "light"
   }, [initialContext, themeScheme, systemColorScheme])
 
-  const navigationTheme: NavTheme = useMemo(() => {
-    switch (themeContext) {
-      case "dark":
-        return NavDarkTheme
-      default:
-        return NavDefaultTheme
-    }
-  }, [themeContext])
+  const theme = themeContext === "dark" ? darkTheme : lightTheme
 
-  const theme: Theme = useMemo(() => {
-    switch (themeContext) {
-      case "dark":
-        return darkTheme
-      default:
-        return lightTheme
+  const navigationTheme: NavTheme = useMemo(() => {
+    const base = theme.isDark ? NavDarkTheme : NavDefaultTheme
+    return {
+      ...base,
+      colors: {
+        primary: theme.color.brand.primary,
+        background: theme.color.canvas,
+        card: theme.color.surface.base,
+        text: theme.color.text.primary,
+        border: theme.color.border.subtle,
+        notification: theme.color.feedback.error,
+      },
+      fonts: {
+        regular: { fontFamily: "Inter_400Regular", fontWeight: "400" },
+        medium: { fontFamily: "Inter_500Medium", fontWeight: "500" },
+        bold: { fontFamily: "Inter_700Bold", fontWeight: "700" },
+        heavy: { fontFamily: "Inter_700Bold", fontWeight: "700" },
+      },
     }
-  }, [themeContext])
+  }, [theme])
 
   useEffect(() => {
     setImperativeTheming(theme)
