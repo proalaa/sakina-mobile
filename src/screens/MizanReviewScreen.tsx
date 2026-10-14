@@ -28,7 +28,7 @@ const copy = {
     run: "تشغيل المثال",
     reset: "إعادة ضبط المثال",
     unavailable: "مثال غير متاح",
-    fonts: "IBM Plex Sans Arabic · أوزان 400 / 500 / 600 / 700",
+    fonts: "Tajawal · أوزان 400 / 500 / 700",
   },
   en: {
     title: "Mizan review",

@@ -45,7 +45,7 @@ describe("Mizan Button", () => {
     })
     expect(getByText("مثال غير متاح")).toHaveStyle({
       color: "#184E3F",
-      fontFamily: "IBMPlexSansArabic_500Medium",
+      fontFamily: "Tajawal_500Medium",
       lineHeight: 20,
     })
     fireEvent.press(action)

@@ -115,13 +115,13 @@ export type MizanLanguage = "ar" | "en"
 
 export const mizanTypography = {
   ar: {
-    "display-lg": { fontSize: 32, lineHeight: 44, fontFamily: "IBMPlexSansArabic_700Bold" },
-    "display-sm": { fontSize: 24, lineHeight: 36, fontFamily: "IBMPlexSansArabic_600SemiBold" },
-    "headline": { fontSize: 20, lineHeight: 30, fontFamily: "IBMPlexSansArabic_500Medium" },
-    "body-lg": { fontSize: 16, lineHeight: 26, fontFamily: "IBMPlexSansArabic_400Regular" },
-    "body-sm": { fontSize: 14, lineHeight: 22, fontFamily: "IBMPlexSansArabic_400Regular" },
-    "label-md": { fontSize: 13, lineHeight: 20, fontFamily: "IBMPlexSansArabic_500Medium" },
-    "caption": { fontSize: 11, lineHeight: 18, fontFamily: "IBMPlexSansArabic_400Regular" },
+    "display-lg": { fontSize: 32, lineHeight: 44, fontFamily: "Tajawal_700Bold" },
+    "display-sm": { fontSize: 24, lineHeight: 36, fontFamily: "Tajawal_500Medium" },
+    "headline": { fontSize: 20, lineHeight: 30, fontFamily: "Tajawal_500Medium" },
+    "body-lg": { fontSize: 16, lineHeight: 26, fontFamily: "Tajawal_400Regular" },
+    "body-sm": { fontSize: 14, lineHeight: 22, fontFamily: "Tajawal_400Regular" },
+    "label-md": { fontSize: 13, lineHeight: 20, fontFamily: "Tajawal_500Medium" },
+    "caption": { fontSize: 11, lineHeight: 18, fontFamily: "Tajawal_400Regular" },
   },
   en: {
     "display-lg": { fontSize: 32, lineHeight: 40, fontFamily: "Inter_700Bold" },

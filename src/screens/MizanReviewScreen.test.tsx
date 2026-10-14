@@ -56,7 +56,7 @@ it("lets reviewers change direction and run/reset visibly labeled examples", () 
     direction: "rtl",
     textAlign: "auto",
     writingDirection: "rtl",
-    fontFamily: "IBMPlexSansArabic_600SemiBold",
+    fontFamily: "Tajawal_500Medium",
   })
 })
 

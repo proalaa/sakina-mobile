@@ -1,6 +1,12 @@
 import { ReactNode, forwardRef, ForwardedRef } from "react"
-// eslint-disable-next-line no-restricted-imports
-import { StyleProp, Text as RNText, TextProps as RNTextProps, TextStyle } from "react-native"
+import {
+  Platform,
+  StyleProp,
+  // eslint-disable-next-line no-restricted-imports
+  Text as RNText,
+  TextProps as RNTextProps,
+  TextStyle,
+} from "react-native"
 import { TOptions } from "i18next"
 
 import { isRTL, TxKeyPath } from "@/i18n"
@@ -96,7 +102,8 @@ export const Text = forwardRef(function Text(props: TextProps, ref: ForwardedRef
     {
       direction: resolvedLanguage === "ar" ? "rtl" : "ltr",
       writingDirection: resolvedLanguage === "ar" ? "rtl" : "ltr",
-      textAlign: "auto",
+      // Android resolves alignment relative to paragraph direction; CSS has no "auto" value.
+      textAlign: Platform.OS === "web" ? (resolvedLanguage === "ar" ? "right" : "left") : "auto",
     },
     numeric && { fontVariant: ["tabular-nums"] },
     $styleOverride,

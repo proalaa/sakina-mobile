@@ -7,7 +7,7 @@ Open the welcome screen's **مراجعة ميزان · Mizan review** button, or
 - Provider-backed rendered tests cover Arabic display typography, Latin dark-theme tabular numerals and directional isolation, accessible primary/secondary actions, disabled activation, language changes, example run/reset behavior and light/dark navigation colors.
 - TypeScript compilation and repository lint checking pass.
 - Android Metro/Hermes export succeeds, including the bundled canonical font assets. This proves bundling, not native layout.
-- Full Jest suite: 6 suites, 26 tests passed.
+- Full Jest suite after the RTL follow-up: 6 suites, 27 tests passed.
 
 ## Contrast inspection
 
@@ -24,9 +24,15 @@ Calculated WCAG relative-luminance ratios for the actual foreground/background p
 
 Disabled controls use reduced opacity and explicit disabled accessibility state. Tertiary and feedback palette tokens are exposed but not used for small foreground text in this slice; their presence does not validate every future pairing.
 
-## Native Android visual checks — pending
+## Native Android visual checks — partially complete
 
-No `adb`, configured Android SDK, emulator image or connected Android device is available in this environment. Android Studio is installed, but its SDK environment variables are unset, the standard SDK executable paths are absent, and the local AVD directory is empty. No native visual result is claimed. Issue #2 remains open until these focused checks are recorded on Android.
+The initial implementation had no configured Android SDK or device available. On 14 October 2026, the SDK and a Samsung SM-G996U running Android 14 were available, with device locale `en-US`.
+
+Native inspection reproduced left-aligned Arabic text while the control rows already followed RTL. The shared Text wrapper now gives each text element its language direction and uses automatic native alignment, preserving centered button labels and isolated numerals. Web retains explicit physical alignment because CSS does not support `text-align: auto`.
+
+Screenshots after the fix confirm Arabic title/body/display text aligns right in light and dark modes; embedded English typography names align left. Switching to English restores left-aligned text and LTR control order. The English numeric section preserves `00:44:12` and `15.3694° N, 44.1910° E`. System-mode selection is visibly distinct from the resolved dark appearance.
+
+These focused checks cover the reported direction bug. Increased font-scale, pressed-state, touch-target measurement and the remaining numeric/action cases below are still pending. Issue #2 remains open until its remaining native acceptance checks are recorded.
 
 Use the same review surface for light/dark and Arabic RTL/Latin LTR cases. Inspect Arabic dots and ascenders at every hierarchy level, numeric colons/degree symbols, wrapping at increased system text size, top/bottom safe areas and the navigation/status bar appearance. Long-press primary/secondary actions to inspect pressed feedback; run/reset the example to inspect disabled feedback and confirm that each target remains at least 48 by 48 logical units. Confirm RTL control order changes immediately without restarting the app, and test Android hardware Back to the welcome screen.
 

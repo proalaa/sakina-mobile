@@ -1,5 +1,5 @@
+import { View, ViewStyle } from "react-native"
 import { NavigationContainer } from "@react-navigation/native"
-import { View } from "react-native"
 import { render } from "@testing-library/react-native"
 
 import { Text } from "./Text"
@@ -18,7 +18,7 @@ describe("Text", () => {
       </ThemeProvider>,
     )
     expect(getByText("ميزان")).toHaveStyle({
-      fontFamily: "IBMPlexSansArabic_700Bold",
+      fontFamily: "Tajawal_700Bold",
       fontSize: 32,
       lineHeight: 44,
       color: "#0F1A15",
@@ -60,7 +60,7 @@ describe("Text", () => {
   it("keeps embedded English text LTR inside an RTL layout without requiring a typography variant", () => {
     const { getByText } = render(
       <ThemeProvider>
-        <View style={{ direction: "rtl" }}>
+        <View style={$rtlContainer}>
           <Text text="English example" language="en" />
         </View>
       </ThemeProvider>,
@@ -71,3 +71,5 @@ describe("Text", () => {
     })
   })
 })
+
+const $rtlContainer: ViewStyle = { direction: "rtl" }
