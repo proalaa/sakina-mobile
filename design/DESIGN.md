@@ -47,6 +47,8 @@ Use semantic roles when expressing status. Color must be accompanied by readable
 
 Arabic uses IBM Plex Sans Arabic, with Alexandria or Tajawal as fallbacks. Latin uses IBM Plex Sans or Inter. Use tabular lining figures for changing numerical displays.
 
+When the selected Arabic fallback lacks a canonical weight, use its nearest available face while preserving the hierarchy. The bundled Tajawal set provides 400, 500, and 700; `display-sm` uses Tajawal 700 as the closest available face to canonical 600 semibold. This substitution is specific to the current bundled font set.
+
 | Token | Arabic size / line height | Latin size / line height | Weight |
 |---|---|---|---|
 | `display-lg` | 32 / 44 | 32 / 40 | 700 |

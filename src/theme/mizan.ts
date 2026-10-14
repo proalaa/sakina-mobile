@@ -116,7 +116,7 @@ export type MizanLanguage = "ar" | "en"
 export const mizanTypography = {
   ar: {
     "display-lg": { fontSize: 32, lineHeight: 44, fontFamily: "Tajawal_700Bold" },
-    "display-sm": { fontSize: 24, lineHeight: 36, fontFamily: "Tajawal_500Medium" },
+    "display-sm": { fontSize: 24, lineHeight: 36, fontFamily: "Tajawal_700Bold" },
     "headline": { fontSize: 20, lineHeight: 30, fontFamily: "Tajawal_500Medium" },
     "body-lg": { fontSize: 16, lineHeight: 26, fontFamily: "Tajawal_400Regular" },
     "body-sm": { fontSize: 14, lineHeight: 22, fontFamily: "Tajawal_400Regular" },
