@@ -86,15 +86,17 @@ export const Text = forwardRef(function Text(props: TextProps, ref: ForwardedRef
 
   const preset: Presets = props.preset ?? "default"
   const $styles: StyleProp<TextStyle> = [
-    $rtlStyle,
     themed($presets[preset]),
     weight && $fontWeightStyles[weight],
     size && $sizeStyles[size],
     variant && {
       ...theme.typography.mizan[resolvedLanguage][variant],
       color: theme.color.text.primary,
+    },
+    {
+      direction: resolvedLanguage === "ar" ? "rtl" : "ltr",
       writingDirection: resolvedLanguage === "ar" ? "rtl" : "ltr",
-      textAlign: resolvedLanguage === "ar" ? "right" : "left",
+      textAlign: "auto",
     },
     numeric && { fontVariant: ["tabular-nums"] },
     $styleOverride,
@@ -141,4 +143,3 @@ const $presets: Record<Presets, ThemedStyleArray<TextStyle>> = {
   formLabel: [$baseStyle, { ...$fontWeightStyles.medium }],
   formHelper: [$baseStyle, { ...$sizeStyles.sm, ...$fontWeightStyles.normal }],
 }
-const $rtlStyle: TextStyle = isRTL ? { writingDirection: "rtl" } : {}

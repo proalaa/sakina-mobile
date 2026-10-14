@@ -1,4 +1,5 @@
 import { NavigationContainer } from "@react-navigation/native"
+import { View } from "react-native"
 import { render } from "@testing-library/react-native"
 
 import { Text } from "./Text"
@@ -21,8 +22,9 @@ describe("Text", () => {
       fontSize: 32,
       lineHeight: 44,
       color: "#0F1A15",
+      direction: "rtl",
       writingDirection: "rtl",
-      textAlign: "right",
+      textAlign: "auto",
     })
   })
 
@@ -48,8 +50,24 @@ describe("Text", () => {
       fontSize: 24,
       lineHeight: 32,
       color: "#EDF5F1",
+      direction: "ltr",
+      textAlign: "auto",
       writingDirection: "ltr",
       fontVariant: ["tabular-nums"],
+    })
+  })
+
+  it("keeps embedded English text LTR inside an RTL layout without requiring a typography variant", () => {
+    const { getByText } = render(
+      <ThemeProvider>
+        <View style={{ direction: "rtl" }}>
+          <Text text="English example" language="en" />
+        </View>
+      </ThemeProvider>,
+    )
+    expect(getByText("English example")).toHaveStyle({
+      direction: "ltr",
+      textAlign: "auto",
     })
   })
 })

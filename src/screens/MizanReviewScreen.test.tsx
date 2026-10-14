@@ -38,6 +38,8 @@ it("lets reviewers change direction and run/reset visibly labeled examples", () 
   expect(getByRole("button", { name: "العربية · RTL", selected: true })).toBeOnTheScreen()
   fireEvent.press(getByRole("button", { name: "English · LTR" }))
   expect(getByText("Mizan review")).toHaveStyle({
+    direction: "ltr",
+    textAlign: "auto",
     writingDirection: "ltr",
     fontFamily: "Inter_600SemiBold",
   })
@@ -51,6 +53,8 @@ it("lets reviewers change direction and run/reset visibly labeled examples", () 
   expect(getByText("Example ready")).toBeOnTheScreen()
   fireEvent.press(getByRole("button", { name: "العربية · RTL" }))
   expect(getByText("مراجعة ميزان")).toHaveStyle({
+    direction: "rtl",
+    textAlign: "auto",
     writingDirection: "rtl",
     fontFamily: "IBMPlexSansArabic_600SemiBold",
   })
