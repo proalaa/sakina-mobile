@@ -46,6 +46,12 @@ export const WelcomeScreen: FC = function WelcomeScreen() {
           language="ar"
           onPress={() => router.push("/mizan")}
         />
+        <Button
+          text="حالة سكينة · Sakina status"
+          preset="secondary"
+          language="ar"
+          onPress={() => router.push("/sakina-status")}
+        />
       </View>
     </Screen>
   )
