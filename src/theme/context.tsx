@@ -33,6 +33,7 @@ export type ThemeContextType = {
   setThemeContextOverride: (newTheme: ThemeContextModeT) => void
   theme: Theme
   themeContext: ImmutableThemeContextModeT
+  themeContextOverride: ThemeContextModeT
   themed: ThemedFnT
 }
 
@@ -73,15 +74,18 @@ export const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
     [setThemeScheme],
   )
 
+  const themeContextOverride: ThemeContextModeT =
+    initialContext ?? (themeScheme === "light" || themeScheme === "dark" ? themeScheme : undefined)
+
   /**
    * initialContext is the theme context passed in from the app.tsx file and always takes precedence.
    * themeScheme is the value from MMKV. If undefined, we fall back to the system theme
    * systemColorScheme is the value from the device. If undefined, we fall back to "light"
    */
   const themeContext: ImmutableThemeContextModeT = useMemo(() => {
-    const t = initialContext || themeScheme || (!!systemColorScheme ? systemColorScheme : "light")
+    const t = themeContextOverride ?? systemColorScheme ?? "light"
     return t === "dark" ? "dark" : "light"
-  }, [initialContext, themeScheme, systemColorScheme])
+  }, [themeContextOverride, systemColorScheme])
 
   const theme = themeContext === "dark" ? darkTheme : lightTheme
 
@@ -130,6 +134,7 @@ export const ThemeProvider: FC<PropsWithChildren<ThemeProviderProps>> = ({
     navigationTheme,
     theme,
     themeContext,
+    themeContextOverride,
     setThemeContextOverride,
     themed,
   }

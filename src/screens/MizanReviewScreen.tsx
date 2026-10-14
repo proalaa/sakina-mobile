@@ -63,7 +63,7 @@ const variants: MizanTextVariant[] = [
 ]
 
 export function MizanReviewScreen() {
-  const { theme, themed, themeContext, setThemeContextOverride } = useAppTheme()
+  const { theme, themed, themeContextOverride, setThemeContextOverride } = useAppTheme()
   const [language, setLanguage] = useState<MizanLanguage>("ar")
   const [complete, setComplete] = useState(false)
   const labels = copy[language]
@@ -91,24 +91,25 @@ export function MizanReviewScreen() {
         <View style={themed($controls)}>
           <Button
             text={labels.light}
-            preset={themeContext === "light" ? "primary" : "secondary"}
+            preset={themeContextOverride === "light" ? "primary" : "secondary"}
             language={language}
-            accessibilityState={{ selected: themeContext === "light" }}
+            accessibilityState={{ selected: themeContextOverride === "light" }}
             onPress={() => setThemeContextOverride("light")}
             style={$control}
           />
           <Button
             text={labels.dark}
-            preset={themeContext === "dark" ? "primary" : "secondary"}
+            preset={themeContextOverride === "dark" ? "primary" : "secondary"}
             language={language}
-            accessibilityState={{ selected: themeContext === "dark" }}
+            accessibilityState={{ selected: themeContextOverride === "dark" }}
             onPress={() => setThemeContextOverride("dark")}
             style={$control}
           />
           <Button
             text={labels.system}
-            preset="secondary"
+            preset={themeContextOverride === undefined ? "primary" : "secondary"}
             language={language}
+            accessibilityState={{ selected: themeContextOverride === undefined }}
             onPress={() => setThemeContextOverride(undefined)}
             style={$control}
           />

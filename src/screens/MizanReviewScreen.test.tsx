@@ -90,15 +90,24 @@ it("resolves light/dark review and navigation surfaces together through the prov
     </ThemeProvider>,
   )
   fireEvent.press(getByRole("button", { name: "English · LTR" }))
+  expect(getByRole("button", { name: "System theme", selected: true })).toBeOnTheScreen()
   fireEvent.press(getByRole("button", { name: "Dark" }))
   expect(getByRole("button", { name: "Dark", selected: true })).toHaveStyle({
     backgroundColor: "#34D399",
   })
+  expect(getByRole("button", { name: "System theme", selected: false })).toBeOnTheScreen()
   expect(getByText("Mizan review")).toHaveStyle({ color: "#EDF5F1" })
   expect(getByText("Navigation surface")).toHaveStyle({
     backgroundColor: "#0A100D",
     color: "#EDF5F1",
     borderColor: "#1E2B25",
+  })
+  fireEvent.press(getByRole("button", { name: "System theme" }))
+  expect(getByRole("button", { name: "System theme", selected: true })).toBeOnTheScreen()
+  expect(getByText("Navigation surface")).toHaveStyle({
+    backgroundColor: "#F8FAF9",
+    color: "#0F1A15",
+    borderColor: "#E5EBE7",
   })
   fireEvent.press(getByRole("button", { name: "Light" }))
   expect(getByText("Navigation surface")).toHaveStyle({
