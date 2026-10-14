@@ -3,6 +3,7 @@ import { View, ViewStyle } from "react-native"
 
 import { Button } from "@/components/Button"
 import { MizanReviewSection } from "@/components/MizanReviewSection"
+import { SakinaSettingsPreview } from "@/components/sakina/SakinaSettingsPreview"
 import { Screen } from "@/components/Screen"
 import { Text } from "@/components/Text"
 import { useAppTheme } from "@/theme/context"
@@ -160,6 +161,8 @@ export function MizanReviewScreen() {
         <Text text={labels.coordinates} variant="body-sm" language={language} />
         <Text text="15.3694° N, 44.1910° E" variant="body-sm" language="en" numeric />
       </MizanReviewSection>
+
+      <SakinaSettingsPreview language={language} />
 
       <MizanReviewSection title={labels.actions} language={language}>
         <Text

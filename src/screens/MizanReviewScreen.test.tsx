@@ -120,3 +120,80 @@ it("resolves light/dark review and navigation surfaces together through the prov
     borderColor: "#E5EBE7",
   })
 })
+
+it("demonstrates accessible settings defaults, retained continuation value, and next-session guidance", () => {
+  const { getAllByText, getByLabelText, getByRole, getByText, queryByText } = render(
+    <ThemeProvider>
+      <NavigationContainer>
+        <SafeAreaProvider>
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="Mizan" component={MizanReviewScreen} />
+          </Stack.Navigator>
+        </SafeAreaProvider>
+      </NavigationContainer>
+    </ThemeProvider>,
+  )
+
+  expect(getByRole("switch", { name: "الأتمتة", checked: false })).toBeOnTheScreen()
+  expect(
+    getByRole("switch", { name: "الإسكات خارج نوافذ الصلاة", checked: true }),
+  ).toBeOnTheScreen()
+  fireEvent.press(getByRole("switch", { name: "الإسكات خارج نوافذ الصلاة" }))
+  expect(
+    getByRole("switch", { name: "الإسكات خارج نوافذ الصلاة", checked: false }),
+  ).toBeOnTheScreen()
+  fireEvent.press(getByRole("switch", { name: "الإسكات خارج نوافذ الصلاة" }))
+  expect(
+    getByRole("switch", { name: "الإسكات خارج نوافذ الصلاة", checked: true }),
+  ).toBeOnTheScreen()
+
+  fireEvent.press(getByRole("button", { name: "English · LTR" }))
+
+  expect(getByRole("switch", { name: "Automation", checked: false })).toBeOnTheScreen()
+  expect(
+    getByRole("switch", { name: "Silence outside prayer windows", checked: true }),
+  ).toBeOnTheScreen()
+  expect(
+    getByRole("switch", { name: "Continue silencing after the prayer window closes" }).props,
+  ).toMatchObject({ accessibilityState: { checked: true, disabled: true } })
+  expect(
+    getByText("Inactive while Silence outside prayer windows is on. Your preference is retained."),
+  ).toBeOnTheScreen()
+  expect(getByRole("switch", { name: "Start on Device Boot", checked: false })).toBeOnTheScreen()
+  expect(getAllByText("Applies next session", { exact: true })).toHaveLength(3)
+  expect(getByLabelText("Maximum session duration: 60 min")).toBeOnTheScreen()
+
+  fireEvent.press(getByRole("switch", { name: "Silence outside prayer windows" }))
+
+  expect(
+    getByRole("switch", { name: "Continue silencing after the prayer window closes" }).props,
+  ).toMatchObject({ accessibilityState: { checked: true, disabled: false } })
+  expect(
+    queryByText(
+      "Inactive while Silence outside prayer windows is on. Your preference is retained.",
+    ),
+  ).toBeNull()
+
+  fireEvent.press(getByRole("switch", { name: "Automation" }))
+  expect(
+    getByText("Turning automation off or selecting Stop ends the current session immediately."),
+  ).toBeOnTheScreen()
+  fireEvent.press(getByRole("button", { name: "Increase maximum session duration" }))
+  expect(getByLabelText("Maximum session duration: 65 min")).toBeOnTheScreen()
+
+  for (let step = 0; step < 23; step += 1) {
+    fireEvent.press(getByRole("button", { name: "Increase maximum session duration" }))
+  }
+  expect(getByLabelText("Maximum session duration: 180 min")).toBeOnTheScreen()
+  expect(
+    getByRole("button", { name: "Increase maximum session duration", disabled: true }),
+  ).toBeOnTheScreen()
+
+  for (let step = 0; step < 32; step += 1) {
+    fireEvent.press(getByRole("button", { name: "Decrease maximum session duration" }))
+  }
+  expect(getByLabelText("Maximum session duration: 20 min")).toBeOnTheScreen()
+  expect(
+    getByRole("button", { name: "Decrease maximum session duration", disabled: true }),
+  ).toBeOnTheScreen()
+})

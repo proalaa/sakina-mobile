@@ -174,6 +174,7 @@ export function Toggle<T>(props: ToggleProps<T>) {
   return (
     <Wrapper
       activeOpacity={1}
+      accessible
       accessibilityRole={accessibilityRole}
       accessibilityState={{ checked: value, disabled }}
       {...WrapperProps}

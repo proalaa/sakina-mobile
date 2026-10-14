@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useCallback } from "react"
-import { Animated, Image, ImageStyle, Platform, StyleProp, View, ViewStyle } from "react-native"
+import { Animated, Image, ImageStyle, StyleProp, View, ViewStyle } from "react-native"
 
 import { iconRegistry } from "@/components/Icon"
 import { isRTL } from "@/i18n"
@@ -19,10 +19,13 @@ export interface SwitchToggleProps extends Omit<ToggleProps<SwitchInputProps>, "
    * Note: `width` and `height` rules should be points (numbers), not percentages.
    */
   inputDetailStyle?: Omit<ViewStyle, "width" | "height"> & { width?: number; height?: number }
+  /** Direction used to position the thumb in language-switchable review surfaces. */
+  layoutDirection?: "rtl" | "ltr"
 }
 
 interface SwitchInputProps extends BaseToggleInputProps<SwitchToggleProps> {
   accessibilityMode?: SwitchToggleProps["accessibilityMode"]
+  layoutDirection?: SwitchToggleProps["layoutDirection"]
 }
 
 /**
@@ -31,12 +34,16 @@ interface SwitchInputProps extends BaseToggleInputProps<SwitchToggleProps> {
  * @returns {JSX.Element} The rendered `Switch` component.
  */
 export function Switch(props: SwitchToggleProps) {
-  const { accessibilityMode, ...rest } = props
+  const { accessibilityMode, layoutDirection, ...rest } = props
   const switchInput = useCallback(
     (toggleProps: SwitchInputProps) => (
-      <SwitchInput {...toggleProps} accessibilityMode={accessibilityMode} />
+      <SwitchInput
+        {...toggleProps}
+        accessibilityMode={accessibilityMode}
+        layoutDirection={layoutDirection}
+      />
     ),
-    [accessibilityMode],
+    [accessibilityMode, layoutDirection],
   )
   return <Toggle accessibilityRole="switch" {...rest} ToggleInput={switchInput} />
 }
@@ -49,6 +56,7 @@ function SwitchInput(props: SwitchInputProps) {
     outerStyle: $outerStyleOverride,
     innerStyle: $innerStyleOverride,
     detailStyle: $detailStyleOverride,
+    layoutDirection,
   } = props
 
   const {
@@ -115,27 +123,26 @@ function SwitchInput(props: SwitchInputProps) {
     }
   })()
 
-  const rtlAdjustment = isRTL ? -1 : 1
+  const rtlAdjustment = layoutDirection ? (layoutDirection === "rtl" ? -1 : 1) : isRTL ? -1 : 1
   const $themedSwitchInner = useMemo(() => themed([$styles.toggleInner, $switchInner]), [themed])
 
-  const offsetLeft = ($innerStyleOverride?.paddingStart ||
-    $innerStyleOverride?.paddingLeft ||
-    $themedSwitchInner?.paddingStart ||
-    $themedSwitchInner?.paddingLeft ||
-    0) as number
-
-  const offsetRight = ($innerStyleOverride?.paddingEnd ||
-    $innerStyleOverride?.paddingRight ||
-    $themedSwitchInner?.paddingEnd ||
-    $themedSwitchInner?.paddingRight ||
-    0) as number
-
-  const outputRange =
-    Platform.OS === "web"
-      ? isRTL
-        ? [+(knobWidth || 0) + offsetRight, offsetLeft]
-        : [offsetLeft, +(knobWidth || 0) + offsetRight]
-      : [rtlAdjustment * offsetLeft, rtlAdjustment * (+(knobWidth || 0) + offsetRight)]
+  const trackWidth =
+    typeof $outerStyleOverride?.width === "number"
+      ? $outerStyleOverride.width
+      : switchMetrics.trackWidth
+  const thumbWidth = typeof knobWidth === "number" ? knobWidth : switchMetrics.thumbSize
+  const startOffset =
+    typeof $detailStyleOverride?.start === "number"
+      ? $detailStyleOverride.start
+      : switchMetrics.edgeOffset
+  const endOffset =
+    typeof $detailStyleOverride?.end === "number"
+      ? $detailStyleOverride.end
+      : switchMetrics.edgeOffset
+  const outputRange = [
+    0,
+    rtlAdjustment * Math.max(0, trackWidth - thumbWidth - startOffset - endOffset),
+  ]
 
   const $animatedSwitchKnob = animate.current.interpolate({
     inputRange: [0, 1],
@@ -220,23 +227,36 @@ function SwitchAccessibilityLabel(props: SwitchInputProps & { role: "on" | "off"
   )
 }
 
+const switchMetrics = { trackWidth: 44, trackHeight: 24, thumbSize: 18, edgeOffset: 3 } as const
+
 const $inputOuter: StyleProp<ViewStyle> = [
   $inputOuterBase,
-  { height: 32, width: 56, borderRadius: 16, borderWidth: 0 },
+  {
+    height: switchMetrics.trackHeight,
+    width: switchMetrics.trackWidth,
+    borderRadius: switchMetrics.trackHeight / 2,
+    borderWidth: 0,
+  },
 ]
 
 const $switchInner: ThemedStyle<ViewStyle> = ({ colors }) => ({
   borderColor: colors.transparent,
   position: "absolute",
-  paddingStart: 4,
-  paddingEnd: 4,
+  width: undefined,
+  height: undefined,
+  start: switchMetrics.edgeOffset,
+  end: switchMetrics.edgeOffset,
+  top: 0,
+  bottom: 0,
 })
 
 const $switchDetail: SwitchToggleProps["inputDetailStyle"] = {
-  borderRadius: 12,
+  borderRadius: switchMetrics.thumbSize / 2,
   position: "absolute",
-  width: 24,
-  height: 24,
+  start: switchMetrics.edgeOffset,
+  top: switchMetrics.edgeOffset,
+  width: switchMetrics.thumbSize,
+  height: switchMetrics.thumbSize,
 }
 
 const $switchAccessibility: ViewStyle = {
