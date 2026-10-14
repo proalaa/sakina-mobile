@@ -28,7 +28,10 @@
     "build:android:sim": "eas build --profile development --platform android --local",
     "build:android:device": "eas build --profile development:device --platform android --local",
     "build:android:preview": "eas build --profile preview --platform android --local",
-    "build:android:prod": "eas build --profile production --platform android --local"
+    "build:android:prod": "eas build --profile production --platform android --local",
+    "check": "pnpm run compile && pnpm run lint:check && pnpm test --runInBand",
+    "check:translations": "node --import tsx scripts/check-translations.ts",
+    "android:preflight": "bash scripts/android-preflight.sh"
   },
   "dependencies": {
     "@expo-google-fonts/inter": "^0.4.2",
@@ -96,5 +99,6 @@
   },
   "engines": {
     "node": ">=20.0.0"
-  }
+  },
+  "packageManager": "pnpm@10.21.0"
 }

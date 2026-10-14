@@ -20,3 +20,7 @@ Before triaging or applying triage labels, read `docs/agents/triage-labels.md`.
 
 Use a single-context layout: root `GLOSSARY.md` and `docs/adr/`.
 Before exploring the codebase, read `docs/agents/domain.md`.
+
+### Native presentation
+
+Before changing or reviewing layout, typography, RTL/LTR or system surfaces, read `docs/agents/native-verification.md`.

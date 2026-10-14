@@ -6,9 +6,6 @@ import { Inter_400Regular } from "@expo-google-fonts/inter/400Regular"
 import { Inter_500Medium } from "@expo-google-fonts/inter/500Medium"
 import { Inter_600SemiBold } from "@expo-google-fonts/inter/600SemiBold"
 import { Inter_700Bold } from "@expo-google-fonts/inter/700Bold"
-import { Tajawal_400Regular } from "@expo-google-fonts/tajawal/400Regular"
-import { Tajawal_500Medium } from "@expo-google-fonts/tajawal/500Medium"
-import { Tajawal_700Bold } from "@expo-google-fonts/tajawal/700Bold"
 import {
   SpaceGrotesk_300Light as spaceGroteskLight,
   SpaceGrotesk_400Regular as spaceGroteskRegular,
@@ -16,6 +13,9 @@ import {
   SpaceGrotesk_600SemiBold as spaceGroteskSemiBold,
   SpaceGrotesk_700Bold as spaceGroteskBold,
 } from "@expo-google-fonts/space-grotesk"
+import { Tajawal_400Regular } from "@expo-google-fonts/tajawal/400Regular"
+import { Tajawal_500Medium } from "@expo-google-fonts/tajawal/500Medium"
+import { Tajawal_700Bold } from "@expo-google-fonts/tajawal/700Bold"
 
 import { mizanTypography } from "./mizan"
 

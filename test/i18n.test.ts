@@ -1,75 +1,79 @@
-import { exec } from "child_process"
+import { spawnSync } from "child_process"
+import { mkdtempSync, rmSync, writeFileSync } from "fs"
+import { tmpdir } from "os"
+import { join, resolve } from "path"
 
-import en from "../src/i18n/en"
+const projectRoot = resolve(__dirname, "..")
+const checker = resolve(projectRoot, "scripts/check-translations.ts")
 
-// Use this array for keys that for whatever reason aren't greppable so they
-// don't hold your test suite hostage by always failing.
-const EXCEPTIONS: string[] = [
-  // "welcomeScreen:readyForLaunch",
-
-  /**
-   * This translation key actually shows up in a comment describing the usage of the translate
-   * function in the src/i18n/translate.ts file. Because the grep command in the i18n test below
-   * doesn't account for commented out code, we must manually exclude it so tests don't fail
-   * because of a comment.
-   */
-  "hello",
-]
-
-function iterate(obj, stack, array) {
-  for (const property in obj) {
-    if (Object.prototype.hasOwnProperty.call(obj, property)) {
-      if (typeof (obj as object)[property] === "object") {
-        iterate(obj[property], `${stack}.${property}`, array)
-      } else {
-        array.push(`${stack.slice(1)}.${property}`)
-      }
-    }
-  }
-
-  return array
+function checkTranslations(sourceDirectory?: string) {
+  return spawnSync(
+    process.execPath,
+    ["--import", "tsx", checker, ...(sourceDirectory ? [sourceDirectory] : [])],
+    {
+      cwd: projectRoot,
+      encoding: "utf8",
+      timeout: 10000,
+    },
+  )
 }
 
-/**
- * This tests your codebase for missing i18n strings so you can avoid error strings at render time
- *
- * It was taken from https://gist.github.com/Michaelvilleneuve/8808ba2775536665d95b7577c9d8d5a1
- * and modified slightly to account for our Ignite higher order components,
- * which take 'tx' and 'fooTx' props.
- * The grep command is nasty looking, but it's essentially searching the codebase for a few different things:
- *
- * tx="*"
- * Tx=""
- * tx={""}
- * Tx={""}
- * translate(""
- *
- * and then grabs the i18n key between the double quotes
- *
- * This approach isn't 100% perfect. If you are storing your key string in a variable because you
- * are setting it conditionally, then it won't be picked up.
- *
- */
+const fixtures: string[] = []
+function fixture(source?: string) {
+  const directory = mkdtempSync(join(tmpdir(), "sakina-translations-"))
+  fixtures.push(directory)
+  if (source !== undefined) writeFileSync(join(directory, "sample.tsx"), source)
+  return directory
+}
 
-describe("i18n", () => {
-  test("There are no missing keys", (done) => {
-    // Actual command output:
-    // grep "[T\|t]x=[{]\?\"\S*\"[}]\?\|translate(\"\S*\"" -ohr './app' | grep -o "\".*\""
-    const command = `grep "[T\\|t]x=[{]\\?\\"\\S*\\"[}]\\?\\|translate(\\"\\S*\\"" -ohr './app' | grep -o "\\".*\\""`
-    exec(command, (_, stdout) => {
-      const allTranslationsDefinedOld = iterate(en, "", [])
-      // Replace first instance of "." because of i18next namespace separator
-      const allTranslationsDefined = allTranslationsDefinedOld.map((key) => key.replace(".", ":"))
-      const allTranslationsUsed = stdout.replace(/"/g, "").split("\n")
-      allTranslationsUsed.splice(-1, 1)
+afterEach(() => {
+  fixtures.splice(0).forEach((directory) => rmSync(directory, { recursive: true, force: true }))
+})
 
-      for (let i = 0; i < allTranslationsUsed.length; i += 1) {
-        if (!EXCEPTIONS.includes(allTranslationsUsed[i])) {
-          // You can add keys to EXCEPTIONS (above) if you don't want them included in the test
-          expect(allTranslationsDefined).toContainEqual(allTranslationsUsed[i])
-        }
-      }
-      done()
-    })
-  }, 240000)
+it("checks literal translation keys in the actual src directory", () => {
+  const result = checkTranslations()
+  expect(result.error).toBeUndefined()
+  expect(result.stderr).toBe("")
+  expect(result.status).toBe(0)
+  expect(result.stdout).toMatch(/Checked \d+ translation references in \d+ source files/)
+})
+
+it("accepts literal props, object keys and translate calls while ignoring comments", () => {
+  const result = checkTranslations(
+    fixture(`
+    // <Text tx="missing:comment" />
+    const sample = <Text tx={"common:ok"} />
+    const options = { labelTx: "common:back" }
+    translate("welcomeScreen:readyForLaunch")
+  `),
+  )
+  expect(result.status).toBe(0)
+  expect(result.stdout).toContain("Checked 3 translation references")
+})
+
+it("fails with a location when a literal translation key is missing", () => {
+  const result = checkTranslations(fixture('<Text tx="missing:key" />'))
+  expect(result.status).toBe(1)
+  expect(result.stderr).toContain('sample.tsx:1: missing en translation "missing:key"')
+  expect(result.stderr).toContain('missing ar translation "missing:key"')
+})
+
+it("fails when the source directory does not exist", () => {
+  const missingDirectory = join(fixture(), "missing-directory")
+  const result = checkTranslations(missingDirectory)
+  expect(result.status).toBe(1)
+  expect(result.stderr).toContain(missingDirectory)
+  expect(result.stderr).toContain("Translation check failed")
+})
+
+it("fails when the source scan is empty", () => {
+  const result = checkTranslations(fixture())
+  expect(result.status).toBe(1)
+  expect(result.stderr).toContain("No TypeScript source files found")
+})
+
+it("fails when source files contain no literal translation references", () => {
+  const result = checkTranslations(fixture('const sample = "no translation usage"'))
+  expect(result.status).toBe(1)
+  expect(result.stderr).toContain("No literal translation references found")
 })
