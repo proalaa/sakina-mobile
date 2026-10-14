@@ -7,6 +7,7 @@ import { initialWindowMetrics, SafeAreaProvider } from "react-native-safe-area-c
 
 import { initI18n } from "@/i18n"
 import { ThemeProvider, useAppTheme } from "@/theme/context"
+import { SakinaTamaguiProvider } from "@/theme/tamagui-provider"
 import { customFontsToLoad } from "@/theme/typography"
 import { loadDateFnsLocale } from "@/utils/formatDate"
 
@@ -59,8 +60,10 @@ export default function Root() {
 function ThemedRouter() {
   const { navigationTheme } = useAppTheme()
   return (
-    <NavigationThemeProvider value={navigationTheme}>
-      <Slot />
-    </NavigationThemeProvider>
+    <SakinaTamaguiProvider>
+      <NavigationThemeProvider value={navigationTheme}>
+        <Slot />
+      </NavigationThemeProvider>
+    </SakinaTamaguiProvider>
   )
 }
